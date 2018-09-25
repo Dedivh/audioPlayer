@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <audio id="id-audio-player" controls="controls" src="1.mp3"></audio>
+        <script>
+            var log = console.log.bind(console)
+
+            var e = function(selector) {
+                var element = document.querySelector(selector)
+                if (element === null) {
+                    var s = `元素没找到，选择器 ${selector} 没有找到或者 js 没有放在 body 里`
+                    alert(s)
+                    return element
+                } else {
+                    return element
+                }
+            }
+
+            // 最外层只应该有函数定义, 不应该有变量
+            // IIFE(立即调用匿名函数表达式)
+            // 调用之后, nextSong 实际上返回的是 f 这个函数
+            // 这样的话, songs 和 index 就只会初始化一次, 后面每次都会记住
+            var nextSong = (function() {
+                var songs = [
+                    '1.mp3',
+                    '2.mp3',
+                    '3.mp3',
+                ]
+                var index = 0
+                var f = function() {
+                    // log('index before', index)
+                    index = (index + 1) % songs.length
+                    // log('index after', index)
+                    return songs[index]
+                }
+                return f
+            })()
+
+            var bindEventCanplay = function(audio) {
+                var a = audio
+                a.addEventListener('canplay', function(event) {
+                    log('duration in canplay', a.duration)
+                })
+            }
+
+            var bindEventEnded = function(audio) {
+                var a = audio
+                a.addEventListener('ended', function(event) {
+                    log('播放完毕')
+                    var song = nextSong()
+                    log('song', song)
+                    a.src = song
+                    // 这里刚刚设置完 src 就去获取 duration 只能得到 NaN
+                    // 因为这个时候音乐还没有加载完全
+                    // 必须在 canplay 事件中才能获取到 duration
+                    // log('duration', a.duration)
+                    a.play()
+                })
+            }
+
+            var bindEvents = function(audio) {
+                var a = audio
+                bindEventCanplay(a)
+                bindEventEnded(a)
+            }
+
+            var __main = function() {
+                var a = e('#id-audio-player')
+                a.volume = 0.3
+                // 为了方便演示, 把 a 放在 window 这个变量上面, 这样可以在 console 里面操作
+                // window.a = a
+                bindEvents(a)
+            }
+
+            __main()
+        </script>
+    </body>
+</html>

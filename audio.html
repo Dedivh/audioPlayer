@@ -20,10 +20,7 @@
                 }
             }
 
-            // 最外层只应该有函数定义, 不应该有变量
-            // IIFE(立即调用匿名函数表达式)
-            // 调用之后, nextSong 实际上返回的是 f 这个函数
-            // 这样的话, songs 和 index 就只会初始化一次, 后面每次都会记住
+           
             var nextSong = (function() {
                 var songs = [
                     '1.mp3',
@@ -54,9 +51,7 @@
                     var song = nextSong()
                     log('song', song)
                     a.src = song
-                    // 这里刚刚设置完 src 就去获取 duration 只能得到 NaN
-                    // 因为这个时候音乐还没有加载完全
-                    // 必须在 canplay 事件中才能获取到 duration
+                  
                     // log('duration', a.duration)
                     a.play()
                 })
@@ -71,8 +66,7 @@
             var __main = function() {
                 var a = e('#id-audio-player')
                 a.volume = 0.3
-                // 为了方便演示, 把 a 放在 window 这个变量上面, 这样可以在 console 里面操作
-                // window.a = a
+              
                 bindEvents(a)
             }
 
